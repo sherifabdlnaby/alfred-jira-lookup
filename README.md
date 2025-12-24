@@ -1,19 +1,19 @@
 # Alfred Jira Lookup
 
-Alfred workflow to quickly search through your Jira issues; It keeps a local cache for instant results, as well as looking up Jira in the background for live results. 
+Alfred workflow to quickly search through your Jira issues; It keeps a local cache for instant results, as well as looking up Jira in the background for live results.
 
-This workflow is originally a fork of [alfred-jira-search](https://github.com/titouanmathis/alfred-jira-search) by [titouanmathis](https://github.com/titouanmathis), that I modified, enhanced, and skimmed to my needs. 
+> This workflow is originally a fork of [alfred-jira-search](https://github.com/titouanmathis/alfred-jira-search) by [titouanmathis](https://github.com/titouanmathis), that I modified, enhanced, and skimmed to my needs.
 
 ## How Search Works
 
-The workflow combines local caching with live Jira API queries:
+The workflow combines local caching with live Jira API queries, when you type a query:
 
-1. **Instant Results**: Displays cached issues immediately as you type.
+1. Alfred will match your query against the local cache.
   2. Cache is updated in the background on trigger every 5 minutes (configurable) or manually via `ju`.
-3. **Live Search**: Three-stage approach:
+3. **Live Search**: Happens on 3 stages:
    - **Stage 1**: If search is an exact ticket key (e.g., `PROJ-123`) search for it explicitly.
    - **Stage 2**: If search is not an exact ticket key, search for it using the base JQL filter (if configured).
-   - **Stage 3**: If Stage 2 returns nothing, search across Jira as whole ().
+   - **Stage 3**: If Stage 2 returns nothing, search across Jira.
 4. **Force Search**: Prefix with `!` to bypass staged search (e.g., `!bug fix`).
 
 ## How I use it
@@ -28,7 +28,7 @@ These two parameters confine the search to projects i am involved in which impro
 
 You will be asked to configure the workflow with the following values :
 
-- The name of your Jira organization (`JIRA_DOMAIN` in `https://JIRA_DOMAIN.atlassian.net`) 
+- The name of your Jira organization (`JIRA_DOMAIN` in `https://JIRA_DOMAIN.atlassian.net`)
 - Your Jira username which usually is your email in `JIRA_USERNAME`,
 - A Jira API token (create one at [https://id.atlassian.com/manage/api-tokens](https://id.atlassian.com/manage/api-tokens)).
 
