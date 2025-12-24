@@ -1,0 +1,10 @@
+{
+  "name": "alfred-jira-lookup",
+  "version": "2.3.3",
+  "homepage": "https://github.com/sherifabdlnaby/alfred-jira-lookup",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "conf": "^7.1.2",
+    "run-node": "^2.0.0"
+  }
+}

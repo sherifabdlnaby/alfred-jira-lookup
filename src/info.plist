@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>com.sherifabdlnaby.jira</string>
+	<key>category</key>
+	<string>Productivity</string>
+	<key>connections</key>
+	<dict>
+		<key>54B07E0E-42E6-42F6-918D-A570D0E3F91C</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>8AC8E160-F7AF-45DF-9224-23D30C766E16</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>8AC8E160-F7AF-45DF-9224-23D30C766E16</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>413EC2EE-73B0-4AA3-8C8E-24561DDCF51F</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>A62279E7-77C3-43D1-B7C0-E08C3EEA7889</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>8AC8E160-F7AF-45DF-9224-23D30C766E16</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>E351268F-8BA7-4604-8A4F-3529FEB9C39F</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>123FB05C-39F7-4579-BB2E-512EEE97FCAF</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>F8A9B5C3-D4E2-4F19-A8B7-E5D9C3A1B2F4</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>123FB05C-39F7-4579-BB2E-512EEE97FCAF</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Sherif</string>
+	<key>description</key>
+	<string>Search Jira issues. Auto-refreshes cache every 5 minutes.</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Jira Lookup</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<true/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>2</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>j</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>1</integer>
+				<key>queuemode</key>
+				<integer>2</integer>
+				<key>runningsubtext</key>
+				<string>Retrieving suggestions...</string>
+				<key>script</key>
+				<string>./node_modules/.bin/run-node index.js "{query}"</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string>Search Jira issues with suggestions</string>
+				<key>title</key>
+				<string>Search Jira issues</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>E351268F-8BA7-4604-8A4F-3529FEB9C39F</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>open "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>123FB05C-39F7-4579-BB2E-512EEE97FCAF</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>0</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>0</integer>
+				<key>hotmod</key>
+				<integer>0</integer>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.hotkey</string>
+			<key>uid</key>
+			<string>54B07E0E-42E6-42F6-918D-A570D0E3F91C</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<true/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>The local data has been updated!</string>
+				<key>title</key>
+				<string>Alfred Jira Search</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>413EC2EE-73B0-4AA3-8C8E-24561DDCF51F</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>./node_modules/.bin/run-node update-data.js --force</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>8AC8E160-F7AF-45DF-9224-23D30C766E16</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>ju</string>
+				<key>subtext</key>
+				<string>Press ⏎ to update the local data</string>
+				<key>text</key>
+				<string>Update local data</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>A62279E7-77C3-43D1-B7C0-E08C3EEA7889</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>j</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>1</integer>
+				<key>queuemode</key>
+				<integer>2</integer>
+				<key>runningsubtext</key>
+				<string>Searching Jira...</string>
+				<key>script</key>
+				<string>./node_modules/.bin/run-node search-live.js "{query}"</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string>Search Jira API directly (live search)</string>
+				<key>title</key>
+				<string>Live Jira Search</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>F8A9B5C3-D4E2-4F19-A8B7-E5D9C3A1B2F4</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string>## Commands
+
+**j** - Search Jira issues
+Shows cached results and searches live API in parallel. Prefix with ! to search all projects.
+
+**ju** - Force cache update
+Updates cache immediately instead of waiting for auto-refresh.
+
+## Setup
+
+Set these in workflow environment variables:
+
+- JIRA_DOMAIN - Your Jira subdomain
+- JIRA_USERNAME - Your email
+- JIRA_TOKEN - API token from https://id.atlassian.com/manage-profile/security/api-tokens
+
+Optional:
+- CACHE_QUERY - JQL for what to cache (default: your assigned tickets)
+- CACHE_REFRESH_MINS - How often to refresh (default: 5)
+- LIVE_SEARCH_BASE_JQL - Scope for live searches (default: your projects)
+- JIRA_ORDER_BY - Sort order for results (default: updated DESC)
+
+## How it works
+
+Cache updates automatically every 5 minutes when you search. Live search has 3 stages:
+1. Check for exact ticket key (CPR-123)
+2. Search with base JQL filter
+3. Fallback to broad search if nothing found
+
+Results from cache are filtered out of live results to avoid duplicates.
+
+## Examples
+
+JIRA_ORDER_BY values:
+- updated DESC (most recently updated first)
+- created DESC (newest tickets first)
+- priority DESC, updated DESC (high priority, then by update time)
+- key ASC (alphabetical by ticket key)</string>
+	<key>uidata</key>
+	<dict>
+		<key>123FB05C-39F7-4579-BB2E-512EEE97FCAF</key>
+		<dict>
+			<key>xpos</key>
+			<real>370</real>
+			<key>ypos</key>
+			<real>555</real>
+		</dict>
+		<key>413EC2EE-73B0-4AA3-8C8E-24561DDCF51F</key>
+		<dict>
+			<key>xpos</key>
+			<real>600</real>
+			<key>ypos</key>
+			<real>640</real>
+		</dict>
+		<key>54B07E0E-42E6-42F6-918D-A570D0E3F91C</key>
+		<dict>
+			<key>xpos</key>
+			<real>35</real>
+			<key>ypos</key>
+			<real>565</real>
+		</dict>
+		<key>8AC8E160-F7AF-45DF-9224-23D30C766E16</key>
+		<dict>
+			<key>xpos</key>
+			<real>370</real>
+			<key>ypos</key>
+			<real>685</real>
+		</dict>
+		<key>A62279E7-77C3-43D1-B7C0-E08C3EEA7889</key>
+		<dict>
+			<key>xpos</key>
+			<real>30</real>
+			<key>ypos</key>
+			<real>715</real>
+		</dict>
+		<key>E351268F-8BA7-4604-8A4F-3529FEB9C39F</key>
+		<dict>
+			<key>xpos</key>
+			<real>35</real>
+			<key>ypos</key>
+			<real>425</real>
+		</dict>
+		<key>F8A9B5C3-D4E2-4F19-A8B7-E5D9C3A1B2F4</key>
+		<dict>
+			<key>xpos</key>
+			<real>35</real>
+			<key>ypos</key>
+			<real>940</real>
+		</dict>
+	</dict>
+	<key>userconfigurationconfig</key>
+	<array/>
+	<key>variables</key>
+	<dict>
+		<key>CACHE_QUERY</key>
+		<string>(assignee = currentUser() AND (created &gt;= -300d OR updated &gt;= "-52w"))</string>
+		<key>CACHE_REFRESH_MINS</key>
+		<string>5</string>
+		<key>JIRA_DOMAIN</key>
+		<string>YOUR_JIRA_DOMAIN</string>
+		<key>JIRA_ORDER_BY</key>
+		<string>updated DESC</string>
+		<key>JIRA_TOKEN</key>
+		<string>YOUR_JIRA_TOKEN</string>
+		<key>JIRA_USERNAME</key>
+		<string>YOUR_JIRA_USERNAME</string>
+		<key>LIVE_SEARCH_BASE_JQL</key>
+		<string>(assignee = currentUser())</string>
+	</dict>
+	<key>variablesdontexport</key>
+	<array>
+		<string>JIRA_DOMAIN</string>
+		<string>JIRA_USERNAME</string>
+		<string>JIRA_TOKEN</string>
+	</array>
+	<key>version</key>
+	<string>1.0.0</string>
+	<key>webaddress</key>
+	<string>https://github.com/sherifabdlnaby/alfred-jira-lookup</string>
+</dict>
+</plist>
