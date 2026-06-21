@@ -24,7 +24,7 @@ const alfred = {
   error(error) {
     const stack = error.stack || error;
     const errorTitle = error.stack ? `${error.name}: ${error.message}` : error;
-    
+
     this.output([
       {
         title: errorTitle,
@@ -46,7 +46,8 @@ const alfred = {
    */
   icons: {
     error: '/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AlertStopIcon.icns',
-    warning: '/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AlertCautionIcon.icns',
+    warning:
+      '/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AlertCautionIcon.icns',
     info: '/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/ToolbarInfo.icns',
   },
 };
@@ -57,4 +58,3 @@ process.on('uncaughtException', (error) => {
 });
 
 module.exports = alfred;
-
