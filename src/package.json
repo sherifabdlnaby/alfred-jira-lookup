@@ -2,9 +2,17 @@
   "name": "alfred-jira-lookup",
   "version": "2.3.3",
   "homepage": "https://github.com/sherifabdlnaby/alfred-jira-lookup",
+  "packageManager": "npm@10.9.8",
   "dependencies": {
     "axios": "^0.21.1",
     "conf": "^7.1.2",
     "run-node": "^2.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.29.0",
+    "eslint": "^9.29.0",
+    "eslint-config-prettier": "^10.1.5",
+    "globals": "^16.2.0",
+    "prettier": "^3.3.0"
   }
 }

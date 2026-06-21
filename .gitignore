@@ -23,3 +23,7 @@ yarn-error.log*
 .env
 .cache
 *.alfredworkflow
+
+# Build artifacts
+/build/
+src/info.plist.bak
