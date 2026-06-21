@@ -16,7 +16,7 @@ Alfred workflow to quickly search through your Jira issues; It keeps a local cac
 The workflow combines local caching with live Jira API queries, when you type a query:
 
 1. Alfred will match your query against the local cache.
-  2. Cache is updated in the background on trigger every 5 minutes (configurable) or manually via `ju`.
+2. Cache is updated in the background on trigger every 5 minutes (configurable) or manually via `ju`.
 3. **Live Search**: Happens on 3 stages:
    - **Stage 1**: If search is an exact ticket key (e.g., `PROJ-123`) search for it explicitly.
    - **Stage 2**: If search is not an exact ticket key, search for it using the base JQL filter (if configured).
@@ -30,7 +30,6 @@ The workflow combines local caching with live Jira API queries, when you type a 
 
 These two parameters confine the search to projects i am involved in which improves the accuracy of fuzzy search. The action will still fallback to jira broad search if needed.
 
-
 ## Configuration
 
 You will be asked to configure the workflow with the following values :
@@ -43,17 +42,59 @@ You will be asked to configure the workflow with the following values :
 
 You can configure these optional environment variables to customize the workflow behavior:
 
-| Parameter | Description | Default | Example |
-|-----------|-------------|---------|---------|
-| `CACHE_QUERY` | JQL query that determines which issues are cached locally | `(assignee = currentUser() AND (created >= -300d OR updated >= "-52w"))` | `project = "PROJ" AND status != Done` |
-| `CACHE_REFRESH_MINS` | How often (in minutes) the cache is automatically refreshed | `5` | `10` |
-| `LIVE_SEARCH_BASE_JQL` | Base JQL filter applied to live search queries (Stage 2) | `(assignee = currentUser())` | `project IN ("PROJ1", "PROJ2")` |
-| `JIRA_ORDER_BY` | Sort order for search results | `updated DESC` | `priority DESC, updated DESC` |
+| Parameter              | Description                                                 | Default                                                                  | Example                               |
+| ---------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------- |
+| `CACHE_QUERY`          | JQL query that determines which issues are cached locally   | `(assignee = currentUser() AND (created >= -300d OR updated >= "-52w"))` | `project = "PROJ" AND status != Done` |
+| `CACHE_REFRESH_MINS`   | How often (in minutes) the cache is automatically refreshed | `5`                                                                      | `10`                                  |
+| `LIVE_SEARCH_BASE_JQL` | Base JQL filter applied to live search queries (Stage 2)    | `(assignee = currentUser())`                                             | `project IN ("PROJ1", "PROJ2")`       |
+| `JIRA_ORDER_BY`        | Sort order for search results                               | `updated DESC`                                                           | `priority DESC, updated DESC`         |
 
 ## Usage
 
-| Command | Action |
-|-|-|
-| `j` | Display a list of unresolved issues sorted by their last updated date. The list is filtered by Alfred. |
-| `ju` | Force update the local data |
+| Command | Action                                                                                                 |
+| ------- | ------------------------------------------------------------------------------------------------------ |
+| `j`     | Display a list of unresolved issues sorted by their last updated date. The list is filtered by Alfred. |
+| `ju`    | Force update the local data                                                                            |
 
+## Development
+
+This project uses [**mise**](https://mise.jdx.dev) to pin its tools, expose tasks, and wire up git hooks, so everyone works with the same versions and commands.
+
+<details>
+<summary><b>1. Install mise (first time on this machine)</b></summary>
+
+```sh
+curl https://mise.run | sh        # or: brew install mise
+```
+
+See the [installation docs](https://mise.jdx.dev/installing-mise.html) for other platforms, then activate it in your shell:
+
+```sh
+echo 'eval "$(mise activate zsh)"'  >> ~/.zshrc   # zsh
+echo 'eval "$(mise activate bash)"' >> ~/.bashrc  # bash
+```
+
+Restart your shell and confirm with `mise doctor`.
+
+</details>
+
+### 2. Set up the project
+
+```sh
+mise trust      # allow this repo's mise config to load
+mise run setup  # install pinned tools + JS deps (git hooks self-install)
+```
+
+### Everyday commands
+
+| Command                                  | What it does                                                                      |
+| ---------------------------------------- | --------------------------------------------------------------------------------- |
+| `mise run check` (alias `mise run lint`) | Run all linters, formatters, and validators. Add `--fix` to auto-fix.             |
+| `mise run build --version vX.Y.Z`        | Build the distributable `.alfredworkflow` (stamps the version into `info.plist`). |
+| `mise tasks`                             | List every available task.                                                        |
+
+Run `mise run <task> --help` to see a task's options.
+
+### Git hooks
+
+`mise run setup` self-installs git hooks via [hk](https://hk.jdx.dev). On **commit**, staged files are formatted and linted automatically — the same `mise run check` CI runs. Skip them for a WIP commit with `git commit --no-verify`.

@@ -1,0 +1,149 @@
+# Minimum `mise` version. If not matched, mise guides the user to update.
+# -> Bump when relying on a newly introduced setting.
+min_version = "2026.6.4" # CVE floor; raise as needed.
+
+# ── 🛠️ tools ──────────────────────────────────────────────────────────────────
+[tools]
+
+# runtimes
+node = "22" # LTS; bumped from EOL node 12 (old .nvmrc). npm pinned via packageManager in src/package.json.
+
+# linters & formatters
+prettier = { version = "3", os = [
+  "linux",
+  "macos",
+] } # JS/JSON/MD formatter (project also pins it in src/devDeps)
+taplo = "0.10" # TOML lint + format
+yamlfmt = "0.21" # YAML format
+yamllint = "1" # YAML structural lint
+uv = "0.11" # pipx installer for yamllint: uv honors minimum_release_age (--exclude-newer); without it mise falls back to pip, whose old CI version rejects --uploaded-prior-to
+typos = "1" # spell-check
+lychee = "0.24" # link checker
+rumdl = "0.2" # Markdown lint + format
+shellcheck = "0.11" # shell lint (used by actionlint for run: blocks)
+actionlint = "1" # GitHub Actions lint
+zizmor = "1" # GitHub Actions security
+pinact = "4" # GitHub Actions pin SHAs
+betterleaks = "1" # secret scanner
+
+# pre-commit
+hk = "1.47.0" # full MAJOR.MINOR.PATCH — git-tag backend (matches `hk init` / hk.pkl)
+
+# ── 🌳 environment variables ──────────────────────────────────────────────────
+[env]
+# Put the project's JS toolchain (eslint, prettier, run-node) on PATH. Deps live
+# in src/, so eslint/prettier resolve their plugins from there. hk runs the
+# binaries from the repo root; this is what makes that work.
+_.path = ["src/node_modules/.bin"]
+
+# ── 📏 vars ───────────────────────────────────────────────────────────────────
+[vars]
+setup_version = "1" # Increment when setup steps change / users must re-run setup.
+
+# ── ▶️ tasks ──────────────────────────────────────────────────────────────────
+[tasks.check]
+description = "Run all linters, formatters & validators as ran by pre-commit and in PR's CI"
+alias = ["lint"]
+usage = '''
+    flag "--fix"              help="apply fixes instead of only reporting"
+    flag "--all"              help="run on all files (default: staged only)"
+    flag "--pr"               help="only files changed vs the default branch (conflicts with --all)"
+    flag "--fail-fast"        help="stop at the first failing step (default: run all, report every failure)"
+    flag "--step <step>"      var=#true help="run only these step(s)"
+    flag "--skip-step <step>" var=#true help="skip these step(s)"
+    complete "step" run="hk check --plan --all --json --no-progress 2>/dev/null | jq -r '.steps[].name'"
+'''
+run = '''
+ff=${usage_fail_fast:+--fail-fast}; ff=${ff:---no-fail-fast}   # default to running every step
+hk check $ff ${usage_fix:+--fix} ${usage_all:+--all} ${usage_pr:+--pr} \
+  ${usage_step:+$(printf -- '--step %s ' $usage_step)} \
+  ${usage_skip_step:+$(printf -- '--skip-step %s ' $usage_skip_step)}
+'''
+
+[tasks.test]
+description = "Run tests (none yet — placeholder)"
+# ordering only; depends run in parallel, don't see this task's env
+depends = ["lint"]
+run = "echo 'No tests yet.'"
+
+[tasks.setup] # one-time, idempotent bootstrap; re-run when `enter` warns it's stale
+description = "One-time, idempotent project bootstrap: install tools, then runtime deps"
+# deps after `mise install`; stamp last (see setup:stamp wait_for)
+depends_post = ["deps", "setup:stamp"]
+run = "mise install"                   # installs tools; runtime deps live in the deps task
+
+[tasks.deps] # install runtime/project dependencies; runnable on its own after a lockfile change
+description = "Install JS deps into src/ (cached; skipped when the lockfile is unchanged)"
+dir = "src"                                                                                # sources/outputs below are resolved relative to this dir
+sources = ["package.json", "package-lock.json"]
+outputs = ["node_modules"]
+run = "npm ci"
+
+[tasks.build]
+description = "Build the .alfredworkflow package"
+usage = '''
+    flag "--version <version>" help="version string to stamp into src/info.plist (e.g. v2.4.0)"
+'''
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Zip src/ (workflow scripts + vendored node_modules) into a distributable
+# .alfredworkflow. info.plist carries a placeholder version (1.0.0); when --version
+# is given we stamp the real one into a throwaway copy, then restore it (non-destructive).
+rm -rf build/
+mkdir -p build/
+
+if [ -n "${usage_version:-}" ]; then
+  version_without_v="${usage_version#v}"
+  artifact="build/alfred-jira-search-${usage_version}.alfredworkflow"
+  cp src/info.plist src/info.plist.bak
+  trap 'mv -f src/info.plist.bak src/info.plist' EXIT
+  # Replace only the top-level <version> value (the line after the top-level <key>version</key>),
+  # not the per-object version integers elsewhere in the plist.
+  /usr/bin/sed -i.tmp -E "/<key>version<\/key>/{n;s|<string>[^<]*</string>|<string>${version_without_v}</string>|;}" src/info.plist
+  rm -f src/info.plist.tmp
+else
+  artifact="build/alfred-jira-search.alfredworkflow"
+fi
+
+( cd src && zip -r --symlinks "../${artifact}" . \
+    -x '.gitignore' -x '*/.git/*' -x '*.bak' )
+echo "Built ${artifact}"
+'''
+
+[tasks.clean]
+description = "Clean build artifacts and installed deps from src/"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+rm -rf build/ src/node_modules/
+echo "Cleaned build/ and src/node_modules/"
+'''
+
+[tasks."setup:stamp"] # write the version of the last run setup to .mise/setup
+hide = true
+quiet = true
+# only stamp success once deps finished (waits iff deps is in the run)
+wait_for = ["deps"]
+run = 'printf %s "{{vars.setup_version}}" > .mise/setup && echo "✅ Setup v{{vars.setup_version}} stamped"'
+
+[tasks."setup:check"] # fast probe (runs on `enter`); warns if setup is stale, never fails
+hide = true
+quiet = true
+run = '[ "$(cat .mise/setup 2>/dev/null)" = "{{vars.setup_version}}" ] || echo "⚠️  Your setup is stale, run: mise run setup" >&2'
+
+# ── 🪝 hooks ──────────────────────────────────────────────────────────────────
+[hooks]
+enter = "mise run setup:check"    # nudge users when their setup is stale (see vars.setup_version)
+postinstall = "hk install --mise" # canonical hook install: runs after every `mise install`, idempotent
+
+# ── ⚙️ settings ───────────────────────────────────────────────────────────────
+[settings]
+lockfile = true                     # write/commit mise.lock — REQUIRED before any pin resolves reproducibly
+minimum_release_age = "7d"          # ignore releases <7d old (supply-chain cooldown)
+disable_backends = ["asdf", "vfox"] # resolve only via verified backends
+
+# Use `gh` token to overcome github limits, fallback to gcm if gh is not working.
+github.gh_cli_tokens = true
+github.use_git_credentials = true

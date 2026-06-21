@@ -33,30 +33,28 @@ const actualQuery = forceWithoutBaseJQL ? query.slice(1).trim() : query;
 
 // If no query, show help
 if (!actualQuery) {
-  alfred.output([
-    {
-      title: 'Live Jira Search',
-      subtitle: 'Type a ticket key (e.g., PROJ-123) or search term. Prefix with ! to search all projects.',
-      valid: false,
-      icon: {
-        path: 'icon.png',
+  alfred.output(
+    [
+      {
+        title: 'Live Jira Search',
+        subtitle:
+          'Type a ticket key (e.g., PROJ-123) or search term. Prefix with ! to search all projects.',
+        valid: false,
+        icon: {
+          path: 'icon.png',
+        },
       },
+    ],
+    {
+      rerun: 0, // Don't auto-rerun
     },
-  ], {
-    rerun: 0, // Don't auto-rerun
-  });
+  );
   return;
 }
 
-const fields = [
-  'key',
-  'assignee',
-  'summary',
-  'project',
-  'issuetype',
-  'status',
-  'updated',
-].join(',');
+const fields = ['key', 'assignee', 'summary', 'project', 'issuetype', 'status', 'updated'].join(
+  ',',
+);
 
 const instance = axios.create({
   baseURL: `https://${process.env.JIRA_DOMAIN}.atlassian.net/rest/api/3/`,
@@ -66,7 +64,7 @@ const instance = axios.create({
   },
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json',
+    Accept: 'application/json',
   },
 });
 
@@ -80,12 +78,12 @@ const instance = axios.create({
 function buildJQL(searchQuery, isExactKeySearch = false, includeBaseJQL = true) {
   const baseJQL = process.env.LIVE_SEARCH_BASE_JQL || '';
   const ticketKeyPattern = /^[A-Z]+-\d+$/i;
-  
+
   let userJQL;
-  
+
   // Check if it's a ticket key (no spaces, matches pattern)
   const isTicketKey = !searchQuery.includes(' ') && ticketKeyPattern.test(searchQuery);
-  
+
   if (isExactKeySearch && isTicketKey) {
     // Exact key search (only if it looks like a valid ticket key)
     userJQL = `key = ${searchQuery.toUpperCase()}`;
@@ -96,15 +94,15 @@ function buildJQL(searchQuery, isExactKeySearch = false, includeBaseJQL = true) 
   } else {
     // General text search - handle multi-word queries
     const escapedQuery = searchQuery.replace(/"/g, '\\"');
-    
+
     // If query is short (< 3 chars) and no spaces, use key search only
     if (searchQuery.length < 3 && !searchQuery.includes(' ')) {
       userJQL = `key ~ "${escapedQuery}"`;
     } else {
       // For longer queries or queries with spaces, search in text fields
       // Split by spaces and create individual search terms for better results
-      const terms = searchQuery.split(/\s+/).filter(t => t.length > 0);
-      
+      const terms = searchQuery.split(/\s+/).filter((t) => t.length > 0);
+
       if (terms.length === 1) {
         // Single term
         userJQL = `(key ~ "${escapedQuery}" OR summary ~ "${escapedQuery}")`;
@@ -114,12 +112,12 @@ function buildJQL(searchQuery, isExactKeySearch = false, includeBaseJQL = true) 
       }
     }
   }
-  
+
   // Combine with base JQL if it exists and is requested
   if (includeBaseJQL && baseJQL && baseJQL.trim()) {
     return `(${userJQL}) AND (${baseJQL})`;
   }
-  
+
   // Add ORDER BY clause with configurable ordering (default to updated DESC)
   const orderBy = (process.env.JIRA_ORDER_BY || '').trim() || 'updated DESC';
   return `${userJQL} ORDER BY ${orderBy}`;
@@ -132,13 +130,13 @@ function buildJQL(searchQuery, isExactKeySearch = false, includeBaseJQL = true) 
  */
 async function executeSearch(jql) {
   console.error(`[DEBUG] Searching with JQL: ${jql}`);
-  
+
   const response = await instance.post('search/jql', {
     jql,
     maxResults: 20,
     fields: fields.split(','),
   });
-  
+
   return response.data.issues || [];
 }
 
@@ -150,9 +148,9 @@ async function executeSearch(jql) {
 function isTicketInCache(ticketKey) {
   const cachedItems = cachedData.get('items') || [];
   const upperKey = ticketKey.toUpperCase();
-  
+
   // Check if any cached item has this ticket key
-  return cachedItems.some(item => {
+  return cachedItems.some((item) => {
     if (!item.title) return false;
     // Extract the key from title format: "KEY – Summary text"
     const titleKey = item.title.split('–')[0]?.trim().toUpperCase();
@@ -166,7 +164,7 @@ function isTicketInCache(ticketKey) {
  * @returns {Array} - Filtered array with only new issues not in cache
  */
 function filterCachedIssues(issues) {
-  return issues.filter(issue => {
+  return issues.filter((issue) => {
     const isInCache = isTicketInCache(issue.key);
     if (isInCache) {
       console.error(`[DEBUG] Filtering out ${issue.key} - already in cache`);
@@ -180,7 +178,7 @@ function filterCachedIssues(issues) {
  * 1. If looks like ticket key: exact key match WITHOUT base JQL
  * 2. Otherwise: text search WITH base JQL (unless forced without)
  * 3. Only if cache has 0 new results AND Stage 2 returned 0 results: text search WITHOUT base JQL
- * 
+ *
  * Special: Prefix query with ! to force search WITHOUT base JQL immediately
  */
 async function searchJira() {
@@ -189,17 +187,19 @@ async function searchJira() {
     let searchedWithBaseJQL = false;
     const ticketKeyPattern = /^[A-Z]+-\d+$/i;
     const looksLikeTicketKey = !actualQuery.includes(' ') && ticketKeyPattern.test(actualQuery);
-    
+
     // If user forced search without base JQL
     if (forceWithoutBaseJQL) {
       console.error(`[DEBUG] Force search without base JQL: "${actualQuery}"`);
-      
+
       if (looksLikeTicketKey) {
         // Exact key search
         const exactKeyJQL = buildJQL(actualQuery, true, false);
         if (exactKeyJQL !== null) {
           issues = await executeSearch(exactKeyJQL);
-          console.error(`[DEBUG] Forced exact key search (no base JQL): Found ${issues.length} issues`);
+          console.error(
+            `[DEBUG] Forced exact key search (no base JQL): Found ${issues.length} issues`,
+          );
         }
       } else {
         // Text search without base JQL
@@ -215,11 +215,15 @@ async function searchJira() {
       const exactKeyJQL = buildJQL(actualQuery, true, false);
       if (exactKeyJQL !== null) {
         issues = await executeSearch(exactKeyJQL);
-        console.error(`[DEBUG] Stage 1 (exact key without base JQL): Found ${issues.length} issues`);
+        console.error(
+          `[DEBUG] Stage 1 (exact key without base JQL): Found ${issues.length} issues`,
+        );
       }
     } else {
       // Stage 2: Query doesn't look like a ticket key - search WITH base JQL
-      console.error(`[DEBUG] Query "${actualQuery}" doesn't look like a ticket key, using text search with base JQL`);
+      console.error(
+        `[DEBUG] Query "${actualQuery}" doesn't look like a ticket key, using text search with base JQL`,
+      );
       const textSearchWithBaseJQL = buildJQL(actualQuery, false, true);
       if (textSearchWithBaseJQL !== null) {
         issues = await executeSearch(textSearchWithBaseJQL);
@@ -230,23 +234,36 @@ async function searchJira() {
 
     // Filter out issues that are already in the cache
     const newIssues = filterCachedIssues(issues);
-    
-    console.error(`[DEBUG] API returned ${issues.length} issues, ${newIssues.length} are new (not in cache)`);
+
+    console.error(
+      `[DEBUG] API returned ${issues.length} issues, ${newIssues.length} are new (not in cache)`,
+    );
 
     // Stage 3: Only search without base JQL if:
     // - We searched with base JQL (Stage 2) AND got 0 results
     // - AND filtering cache gave us 0 new results
     // - AND user didn't force without base JQL (already did that)
-    if (!forceWithoutBaseJQL && searchedWithBaseJQL && issues.length === 0 && newIssues.length === 0) {
-      console.error(`[DEBUG] No results with base JQL and nothing new in cache, trying without base JQL...`);
+    if (
+      !forceWithoutBaseJQL &&
+      searchedWithBaseJQL &&
+      issues.length === 0 &&
+      newIssues.length === 0
+    ) {
+      console.error(
+        `[DEBUG] No results with base JQL and nothing new in cache, trying without base JQL...`,
+      );
       const textSearchWithoutBaseJQL = buildJQL(actualQuery, false, false);
       if (textSearchWithoutBaseJQL !== null) {
         issues = await executeSearch(textSearchWithoutBaseJQL);
-        console.error(`[DEBUG] Stage 3 (text search without base JQL): Found ${issues.length} issues`);
+        console.error(
+          `[DEBUG] Stage 3 (text search without base JQL): Found ${issues.length} issues`,
+        );
         // Filter Stage 3 results against cache
         const newIssuesStage3 = filterCachedIssues(issues);
-        console.error(`[DEBUG] Stage 3 returned ${issues.length} issues, ${newIssuesStage3.length} are new`);
-        
+        console.error(
+          `[DEBUG] Stage 3 returned ${issues.length} issues, ${newIssuesStage3.length} are new`,
+        );
+
         if (newIssuesStage3.length > 0) {
           const formattedIssues = formatIssues(newIssuesStage3);
           alfred.output(formattedIssues, {
@@ -261,8 +278,8 @@ async function searchJira() {
     if (newIssues.length > 0) {
       const formattedIssues = formatIssues(newIssues);
       alfred.output(formattedIssues, {
-            rerun: 0,
-          });
+        rerun: 0,
+      });
       return;
     }
 
@@ -273,45 +290,49 @@ async function searchJira() {
         rerun: 0,
       });
     } else {
-      alfred.output([
-        {
-          title: `No issues found for "${actualQuery}"`,
-          subtitle: 'Press ⏎ to search in Jira web interface',
-          arg: `https://${process.env.JIRA_DOMAIN}.atlassian.net/secure/QuickSearch.jspa?searchString=${encodeURIComponent(actualQuery)}`,
-          icon: {
-            path: 'icon.png',
+      alfred.output(
+        [
+          {
+            title: `No issues found for "${actualQuery}"`,
+            subtitle: 'Press ⏎ to search in Jira web interface',
+            arg: `https://${process.env.JIRA_DOMAIN}.atlassian.net/secure/QuickSearch.jspa?searchString=${encodeURIComponent(actualQuery)}`,
+            icon: {
+              path: 'icon.png',
+            },
           },
+        ],
+        {
+          rerun: 0,
         },
-      ], {
-        rerun: 0,
-      });
+      );
     }
   } catch (error) {
     console.error(`[DEBUG] Error details:`, error.response?.data || error.message);
-    
-    const errorMessage = error.response?.data?.errorMessages?.[0] 
-      || error.response?.data?.errors 
-      || error.message;
-    
-    alfred.output([
+
+    const errorMessage =
+      error.response?.data?.errorMessages?.[0] || error.response?.data?.errors || error.message;
+
+    alfred.output(
+      [
+        {
+          title: 'Failed to search Jira',
+          subtitle: typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage),
+          valid: false,
+          icon: {
+            path: alfred.icons.error,
+          },
+          text: {
+            copy: JSON.stringify(error.response?.data || error.message, null, 2),
+            largetype: JSON.stringify(error.response?.data || error.message, null, 2),
+          },
+        },
+      ],
       {
-        title: 'Failed to search Jira',
-        subtitle: typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage),
-        valid: false,
-        icon: {
-          path: alfred.icons.error,
-        },
-        text: {
-          copy: JSON.stringify(error.response?.data || error.message, null, 2),
-          largetype: JSON.stringify(error.response?.data || error.message, null, 2),
-        },
+        rerun: 0, // Don't auto-rerun on errors
       },
-    ], {
-      rerun: 0, // Don't auto-rerun on errors
-    });
+    );
   }
 }
 
 // Execute search
 searchJira();
-

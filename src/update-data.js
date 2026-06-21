@@ -12,15 +12,9 @@ const data = new Conf({
   serialize: (value) => JSON.stringify(value),
 });
 
-const fields = [
-  'key',
-  'assignee',
-  'summary',
-  'project',
-  'issuetype',
-  'status',
-  'updated',
-].join(',');
+const fields = ['key', 'assignee', 'summary', 'project', 'issuetype', 'status', 'updated'].join(
+  ',',
+);
 
 const MAX_RESULTS = 100;
 
@@ -37,7 +31,7 @@ const instance = axios.create({
   },
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json',
+    Accept: 'application/json',
   },
 });
 
@@ -61,26 +55,28 @@ function end() {
  */
 function getPageResult(nextPageToken = null) {
   return async () => {
-    const pageInfo = nextPageToken ? `with token ${nextPageToken.substring(0, 20)}...` : 'first page';
+    const pageInfo = nextPageToken
+      ? `with token ${nextPageToken.substring(0, 20)}...`
+      : 'first page';
     console.log(`Getting page result (${pageInfo})...`);
-    
+
     return new Promise((resolve, reject) => {
       // Build JQL with ORDER BY clause (default to updated DESC)
       const baseJQL = process.env.CACHE_QUERY;
       const orderBy = (process.env.JIRA_ORDER_BY || '').trim() || 'updated DESC';
       const jql = `${baseJQL} ORDER BY ${orderBy}`;
-      
+
       const requestBody = {
         jql: jql,
         maxResults: MAX_RESULTS,
         fields: fields.split(','),
       };
-      
+
       // Add nextPageToken only if it exists (not for the first page)
       if (nextPageToken) {
         requestBody.nextPageToken = nextPageToken;
       }
-      
+
       instance
         .post('search/jql', requestBody)
         .then((response) => {
@@ -103,7 +99,7 @@ function getPageResult(nextPageToken = null) {
  */
 async function fetchAllPages(nextPageToken = null) {
   const result = await getPageResult(nextPageToken)();
-  
+
   // If there's a nextPageToken, fetch the next page
   if (result.nextPageToken) {
     await fetchAllPages(result.nextPageToken);
@@ -114,7 +110,9 @@ console.time('Update data');
 const lastUpdated = data.get('updated');
 
 console.log(`Last Updated Time: ${lastUpdated ? new Date(lastUpdated).toISOString() : 'never'}`);
-console.log(`Cache age: ${lastUpdated ? Math.round((Date.now() - lastUpdated) / 1000 / 60) : 'N/A'} minutes`);
+console.log(
+  `Cache age: ${lastUpdated ? Math.round((Date.now() - lastUpdated) / 1000 / 60) : 'N/A'} minutes`,
+);
 console.log(`Max cache age: ${CACHE_REFRESH_MINS} minutes`);
 const force = process.argv[2] === '--force';
 
