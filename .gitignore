@@ -27,3 +27,6 @@ yarn-error.log*
 # Build artifacts
 /build/
 src/info.plist.bak
+
+# Local mise overrides (not shared)
+mise.local.toml
