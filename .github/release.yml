@@ -1,0 +1,32 @@
+# Groups the notes that `gh release create --generate-notes` produces (release.yml workflow).
+# Keyed on the category labels the autolabel job applies (config: .github/auto-release.yml).
+# Bump labels (major/minor/patch/skip-release) drive the version, not the notes — excluded here.
+changelog:
+  exclude:
+    labels:
+      - skip-release
+      - skip-changelog
+  categories:
+    - title: 🚀 Enhancements
+      labels:
+        - enhancement
+        - feature
+    - title: 🐛 Bug Fixes
+      labels:
+        - bug
+        - fix
+        - hotfix
+        - bugfix
+    - title: ⬆️ Upgrades
+      labels:
+        - upgrades
+        - dependency-update
+    - title: 🤖 Automatic Updates
+      labels:
+        - auto-update
+    - title: 📝 Documentation
+      labels:
+        - docs
+    - title: Other Changes
+      labels:
+        - "*"
