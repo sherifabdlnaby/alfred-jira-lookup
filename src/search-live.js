@@ -1,7 +1,7 @@
 const axios = require('axios');
 const alfred = require('./utils/alfred-simple');
 const formatIssues = require('./utils/format-issues');
-const Conf = require('conf');
+const Conf = require('conf').default;
 
 // Check if workflow is configured
 if (!(process.env.JIRA_DOMAIN && process.env.JIRA_TOKEN && process.env.JIRA_USERNAME)) {
