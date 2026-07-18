@@ -1,5 +1,5 @@
 const axios = require('axios');
-const Conf = require('conf');
+const Conf = require('conf').default;
 const formatIssues = require('./utils/format-issues');
 
 // Initialize data cache

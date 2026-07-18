@@ -1,5 +1,5 @@
 const alfred = require('./utils/alfred-simple');
-const Conf = require('conf');
+const Conf = require('conf').default;
 const childProcess = require('child_process');
 const path = require('path');
 
