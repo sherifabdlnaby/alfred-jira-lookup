@@ -22,6 +22,10 @@ Each release asset is built by CI and carries a signed [build provenance attesta
 gh attestation verify alfred-jira-search-vX.Y.Z.alfredworkflow --owner sherifabdlnaby
 ```
 
+### Cutting a release
+
+Merges to `main` are tagged automatically from the PR's bump label (`major` / `minor` / `patch`, or `skip-release`). See [CONTRIBUTING.md](.github/CONTRIBUTING.md).
+
 ## How Search Works
 
 The workflow combines local caching with live Jira API queries, when you type a query:
