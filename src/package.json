@@ -4,15 +4,15 @@
   "homepage": "https://github.com/sherifabdlnaby/alfred-jira-lookup",
   "packageManager": "npm@10.9.8",
   "dependencies": {
-    "axios": "^0.32.0",
-    "conf": "^7.1.2",
-    "run-node": "^2.0.0"
+    "axios": "^1.18.1",
+    "conf": "^15.1.0",
+    "run-node": "^3.0.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.29.0",
-    "eslint": "^9.29.0",
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.6.0",
     "eslint-config-prettier": "^10.1.5",
-    "globals": "^16.2.0",
-    "prettier": "^3.3.0"
+    "globals": "^17.7.0",
+    "prettier": "^3.9.5"
   }
 }
