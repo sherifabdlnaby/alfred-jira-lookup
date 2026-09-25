@@ -79,7 +79,7 @@ This project uses [**mise**](https://mise.jdx.dev) to pin its tools, expose task
 <summary><b>1. Install mise (first time on this machine)</b></summary>
 
 ```sh
-curl https://mise.run | sh        # or: brew install mise
+brew install mise          # macOS / Linux (Homebrew); or: curl https://mise.run | sh
 ```
 
 See the [installation docs](https://mise.jdx.dev/installing-mise.html) for other platforms, then activate it in your shell:
@@ -112,4 +112,4 @@ Run `mise run <task> --help` to see a task's options.
 
 ### Git hooks
 
-`mise run setup` self-installs git hooks via [hk](https://hk.jdx.dev). On **commit**, staged files are formatted and linted automatically — the same `mise run check` CI runs. Skip them for a WIP commit with `git commit --no-verify`.
+`mise run setup` self-installs git hooks via [hk](https://hk.jdx.dev) (config in `.config/hk.pkl`). On **commit**, staged files are formatted and linted automatically; a **push** runs the slower gates. CI runs both as `mise run check`. Skip them for a WIP commit with `git commit --no-verify`.
