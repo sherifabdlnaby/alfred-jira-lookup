@@ -27,7 +27,7 @@ pinact = "4" # GitHub Actions pin SHAs
 betterleaks = "1" # secret scanner
 
 # pre-commit
-hk = "1.48.0" # full MAJOR.MINOR.PATCH — git-tag backend (matches `hk init` / hk.pkl)
+hk = "2.0.1" # full MAJOR.MINOR.PATCH pin, must match .config/hk.pkl's amends/import URLs
 
 # ── 🌳 environment variables ──────────────────────────────────────────────────
 [env]
@@ -75,7 +75,7 @@ run = "mise install"                   # installs tools; runtime deps live in th
 [tasks.deps] # install runtime/project dependencies; runnable on its own after a lockfile change
 description = "Install JS deps into src/ (cached; skipped when the lockfile is unchanged)"
 dir = "src"                                                                                # sources/outputs below are resolved relative to this dir
-sources = ["package.json", "package-lock.json"]
+sources = ["package-lock.json", "package.json"]
 outputs = ["node_modules"]
 run = "npm ci"
 

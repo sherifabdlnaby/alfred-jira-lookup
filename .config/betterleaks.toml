@@ -5,7 +5,8 @@
 [extend]
 useDefault = true
 
-[allowlist]
+# An [allowlist] with no entries is a config error: uncomment the header with its first entry.
+# [allowlist]
 # paths = [
 #   '''src/node_modules/.*''',
 # ]
