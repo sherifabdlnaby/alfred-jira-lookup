@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+#MISE description="Build the .alfredworkflow package"
+#USAGE flag "--version <version>" help="version string to stamp into src/info.plist (e.g. v2.4.0)"
+set -euo pipefail
+
+# Zip src/ (workflow scripts + vendored node_modules) into a distributable
+# .alfredworkflow. info.plist carries a placeholder version (1.0.0); when --version
+# is given we stamp the real one into a throwaway copy, then restore it (non-destructive).
+rm -rf build/
+mkdir -p build/
+
+if [ -n "${usage_version:-}" ]; then
+  version_without_v="${usage_version#v}"
+  artifact="build/alfred-jira-search-${usage_version}.alfredworkflow"
+  cp src/info.plist src/info.plist.bak
+  trap 'mv -f src/info.plist.bak src/info.plist' EXIT
+  # Replace only the top-level <version> value (the line after the top-level <key>version</key>),
+  # not the per-object version integers elsewhere in the plist.
+  /usr/bin/sed -i.tmp -E "/<key>version<\/key>/{n;s|<string>[^<]*</string>|<string>${version_without_v}</string>|;}" src/info.plist
+  rm -f src/info.plist.tmp
+else
+  artifact="build/alfred-jira-search.alfredworkflow"
+fi
+
+(cd src && zip -r --symlinks "../${artifact}" . \
+  -x '.gitignore' -x '*/.git/*' -x '*.bak')
+echo "Built ${artifact}"
