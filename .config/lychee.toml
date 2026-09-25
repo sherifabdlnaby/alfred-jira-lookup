@@ -2,6 +2,8 @@
 # Offline mode: resolve local/relative links only; http(s) links show as excluded,
 # not checked. Flip `offline = false` (and confirm) to also check online links.
 offline = true
+# Also check the `#anchor` of local links, so a link to a renamed heading fails.
+include_fragments = "anchor-only"
 
 # Don't use `exclude_path` to scope inputs — it's regex-matched against the whole
 # path and can silently drop subtrees. hk already passes the right file list.

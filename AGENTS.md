@@ -20,7 +20,9 @@ Prefer `mise run <task>` over calling the tool directly, so local, hooks, and CI
 
 ## Git hooks (hk)
 
-Commits run [hk](https://hk.jdx.dev), the same `check` CI runs, to format and lint staged files. Fix failures with `mise run check --fix`. Don't disable steps to push a commit through; `git commit --no-verify` skips hooks for a WIP commit.
+`mise run setup` installs the hooks (through `mise install`). On Git 2.54+ they live in git config, not `.git/hooks/`, so an empty `.git/hooks/` does not mean no hooks.
+
+Commits run [hk](https://hk.jdx.dev) commit gates on staged files, and a push runs the push gates; CI runs both as `mise run check`, so a green commit is not yet a green CI. Fix failures with `mise run check --fix`. For a shorter loop, target steps with `mise run check --step <name>` (or skip one with `--skip-step <name>`). Don't disable steps to push a commit through; `git commit --no-verify` skips hooks for a WIP commit.
 
 ## Releases
 
@@ -38,10 +40,9 @@ Merging to `main` with a bump label (`major` / `minor` / `patch`) tags, builds t
 
 Changing tools, tasks, env, or hooks? Edit the config, don't bolt on scripts, then run `mise run check`. Where things live:
 
-- **`mise.toml`**: the source of truth for `[tools]`, `[tasks]`, `[vars]`, `[settings]`, and `[hooks]`.
-- **`mise.lock`**: resolved versions plus checksums. Commit it; regenerate with `mise install` then `mise lock --platform macos-arm64,linux-x64` after a `[tools]` change.
-- **`.mise/`**: project-local state (gitignored), like the setup stamp the `setup`/`enter` hooks read.
-- **`hk.pkl`**: the pre-commit and `check` pipeline (linters and formatters, in Pkl). Add or edit a lint step here.
-- Linter config scaffolds live at the repo root (`typos.toml`, `.betterleaks.toml`, `lychee.toml`, `rumdl.toml`, `.yamllint`) and `.github/zizmor.yml`; JS lint/format config in `src/eslint.config.mjs` and `.prettierrc.json`.
+- **`mise.toml`**: the source of truth for `[tools]`, `[tasks]`, `[env]`/`[vars]`, `[settings]`, `[hooks]`, and `[doctor]` (prerequisites mise can't install; `mise run setup` runs `mise doctor project` first).
+- **`mise.lock`**: resolved versions plus checksums. Commit it; regenerate with `mise lock --platform macos-arm64,linux-x64` after a `[tools]` change.
+- **`.config/mise/`**: project-local state, like the gitignored setup stamp the `setup`/`enter` hooks read. Tasks longer than a few lines are executable file tasks in `.config/mise/tasks/`.
+- **`.config/hk.pkl`**: the pre-commit and `check` pipeline (linters and formatters, in Pkl). Add a lint step to the commit or push gates here; linter configs live beside it in `.config/` (plus `.github/zizmor.yml`). JS lint/format config is in `src/eslint.config.mjs` and `.prettierrc.json`.
 
 For tool, task, and hook syntax, see the [mise](https://mise.jdx.dev) and [hk](https://hk.jdx.dev) docs.
