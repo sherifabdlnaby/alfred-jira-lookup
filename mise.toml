@@ -1,6 +1,6 @@
 # Minimum `mise` version. If not matched, mise guides the user to update.
 # -> Bump when relying on a newly introduced setting.
-min_version = "2026.9.6" # oldest mise that supports everything in this file (`mise doctor project`)
+min_version = "2026.9.13" # at or above the mise that wrote mise.lock (and the CI pin)
 
 # ── 🛠️ tools ──────────────────────────────────────────────────────────────────
 [tools]
@@ -16,7 +16,7 @@ prettier = { version = "3", os = [
 taplo = "0.10" # TOML lint + format
 yamlfmt = "0.21" # YAML format
 yamllint = "1" # YAML structural lint
-uv = "0.11" # pipx installer for yamllint: uv honors minimum_release_age (--exclude-newer); without it mise falls back to pip, whose old CI version rejects --uploaded-prior-to
+uv = "0.11" # pypi installer for yamllint: uv honors minimum_release_age (--exclude-newer); without it mise falls back to pip, whose old CI version rejects --uploaded-prior-to
 typos = "1" # spell-check
 lychee = "0.24" # link checker
 rumdl = "0.2" # Markdown lint + format
