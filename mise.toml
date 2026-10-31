@@ -1,33 +1,28 @@
 # Minimum `mise` version. If not matched, mise guides the user to update.
 # -> Bump when relying on a newly introduced setting.
-min_version = "2026.9.13" # at or above the mise that wrote mise.lock (and the CI pin)
+min_version = "2026.10.19" # the mise that wrote mise.lock; at or below the CI pin
 
 # ── 🛠️ tools ──────────────────────────────────────────────────────────────────
 [tools]
 
 # runtimes
-node = "22" # LTS; npm is the bundled one, pinned via packageManager in src/package.json
+node = "26" # LTS; npm is the bundled one, pinned via packageManager in src/package.json
 
-# linters & formatters
-prettier = { version = "3", os = [
-  "linux",
-  "macos",
-] } # JS/JSON formatter (project also pins it in src/devDeps; Markdown is rumdl)
-taplo = "0.10" # TOML lint + format
-yamlfmt = "0.21" # YAML format
-yamllint = "1" # YAML structural lint
-uv = "0.11" # pypi installer for yamllint: uv honors minimum_release_age (--exclude-newer); without it mise falls back to pip, whose old CI version rejects --uploaded-prior-to
-typos = "1" # spell-check
-lychee = "0.24" # link checker
-rumdl = "0.2" # Markdown lint + format
-shellcheck = "0.11" # shell lint (used by actionlint for run: blocks)
-actionlint = "1" # GitHub Actions lint
-zizmor = "1" # GitHub Actions security
-pinact = "4" # GitHub Actions pin SHAs
-betterleaks = "1" # secret scanner
+# linters & formatters (eslint and prettier come from src/node_modules, see [env])
+taplo = "0.10"                 # TOML lint + format
+yamlfmt = "0.21"               # YAML format
+"aqua:owenlamont/ryl" = "0.26" # YAML structural lint
+typos = "1"                    # spell-check
+lychee = "0.24"                # link checker
+rumdl = "0.3"                  # Markdown lint + format
+shellcheck = "0.11"            # jactionlint lints workflow run: blocks with it
+jactionlint = "2"              # GitHub Actions lint
+zizmor = "1"                   # GitHub Actions security
+pinact = "5"                   # GitHub Actions pin SHAs
+betterleaks = "1"              # secret scanner
 
 # pre-commit
-hk = "2.0.1" # full MAJOR.MINOR.PATCH pin, must match .config/hk.pkl's amends/import URLs
+hk = "2.8.1" # full MAJOR.MINOR.PATCH pin, must match .config/hk.pkl's amends/import URLs
 
 # ── 🌳 environment variables ──────────────────────────────────────────────────
 [env]
@@ -95,15 +90,12 @@ quiet = true
 wait_for = ["deps"]
 run = 'printf %s "{{vars.setup_version}}" > .config/mise/setup && echo "✅ Setup v{{vars.setup_version}} stamped"'
 
-[tasks."setup:check"] # fast probe (runs on `enter`); warns if setup is stale, never fails
-hide = true
-quiet = true
-run = '[ "$(cat .config/mise/setup 2>/dev/null)" = "{{vars.setup_version}}" ] || echo "⚠️  Your setup is stale, run: mise run setup" >&2'
-
 # ── 🪝 hooks ──────────────────────────────────────────────────────────────────
 [hooks]
-enter = "MISE_OFFLINE=1 mise run setup:check" # nudge when setup is stale; MISE_OFFLINE keeps cd offline-safe
-postinstall = "hk install --mise"             # canonical hook install: runs after every `mise install`, idempotent
+# plain shell: a `mise run` here installs missing tools on every `cd`
+enter = '[ "$(cat "{{config_root}}/.config/mise/setup" 2>/dev/null)" = "{{vars.setup_version}}" ] || echo "⚠️  Your setup is stale, run: mise run setup" >&2'
+# canonical hook install: runs after every `mise install`, idempotent
+postinstall = "hk install --mise"
 
 # ── 🩺 doctor checks ──────────────────────────────────────────────────────────
 # Prerequisites mise can't install. `mise doctor project` runs them; setup runs it first.
