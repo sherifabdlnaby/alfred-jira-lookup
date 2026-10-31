@@ -2,7 +2,7 @@
   "name": "alfred-jira-lookup",
   "version": "2.3.3",
   "homepage": "https://github.com/sherifabdlnaby/alfred-jira-lookup",
-  "packageManager": "npm@12.2.1",
+  "packageManager": "npm@11.20.0",
   "engines": {
     "node": ">=20.19.0"
   },
