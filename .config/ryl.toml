@@ -1,0 +1,6 @@
+# ryl config: https://github.com/owenlamont/ryl (yamllint rules in one binary)
+# Structural rules only; yamlfmt owns style. Syntax errors always report.
+[lint.rules]
+anchors = "enable"
+indentation = "enable"
+key-duplicates = "enable"
