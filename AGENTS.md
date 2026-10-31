@@ -32,7 +32,7 @@ Merging to `main` with a bump label (`major` / `minor` / `patch`) tags, builds t
 
 - The workflow source lives in `src/`: `index.js` (cached search), `search-live.js` (live Jira API), `update-data.js` (cache refresh), `utils/`, and `info.plist` (the real Alfred workflow definition — the root `info.plist` is an unrelated stub).
 - JS deps install into `src/node_modules` (gitignored). `mise.toml` puts `src/node_modules/.bin` on `PATH` so `eslint`/`prettier`/`run-node` resolve. `mise run build` vendors those deps into the `.alfredworkflow` bundle.
-- **ESLint** uses a flat config at `src/eslint.config.mjs` (ESLint 9, `@eslint/js` recommended + node globals); formatting is owned by **Prettier** via the root `.prettierrc.json`. hk's `eslint` step points at `src/eslint.config.mjs` so plugins resolve from `src/node_modules`.
+- **ESLint** uses a flat config at `src/eslint.config.mjs` (`@eslint/js` recommended + node globals); formatting is owned by **Prettier** via the root `.prettierrc.json`. hk's `eslint` step points at `src/eslint.config.mjs` so plugins resolve from `src/node_modules`.
 - `src/info.plist` carries a placeholder version (`1.0.0`); `mise run build --version vX.Y.Z` stamps the real version into a throwaway copy at build time, then restores the placeholder.
 - `mise run clean` removes `build/` and `src/node_modules/`.
 
@@ -42,7 +42,7 @@ Changing tools, tasks, env, or hooks? Edit the config, don't bolt on scripts, th
 
 - **`mise.toml`**: the source of truth for `[tools]`, `[tasks]`, `[env]`/`[vars]`, `[settings]`, `[hooks]`, and `[doctor]` (prerequisites mise can't install; `mise run setup` runs `mise doctor project` first).
 - **`mise.lock`**: resolved versions plus checksums. Commit it; regenerate with `mise lock --platform macos-arm64,linux-x64` after a `[tools]` change.
-- **`.config/mise/`**: project-local state, like the gitignored setup stamp the `setup`/`enter` hooks read. Tasks longer than a few lines are executable file tasks in `.config/mise/tasks/`.
+- **`.config/mise/`**: project-local state, like the gitignored setup stamp that `setup` writes and the `enter` hook reads. Tasks longer than a few lines are executable file tasks in `.config/mise/tasks/`.
 - **`.config/hk.pkl`**: the pre-commit and `check` pipeline (linters and formatters, in Pkl). Add a lint step to the commit or push gates here; linter configs live beside it in `.config/` (plus `.github/zizmor.yml`). JS lint/format config is in `src/eslint.config.mjs` and `.prettierrc.json`.
 
 For tool, task, and hook syntax, see the [mise](https://mise.jdx.dev) and [hk](https://hk.jdx.dev) docs.
