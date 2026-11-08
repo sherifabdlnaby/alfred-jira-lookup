@@ -51,7 +51,7 @@ jobs:
           key: mise-cas-${{ runner.os }}-${{ hashFiles('mise.lock') }}
           restore-keys: mise-cas-${{ runner.os }}-
       - name: Setup mise
-        uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
+        uses: jdx/mise-action@6612f0ef07ed2a736cd1e00a94a065522dd41195 # v5.2.5
         with:
           version: "2026.10.24" # pin mise itself, not just the action
           install: true
@@ -84,10 +84,22 @@ jobs:
           if [ "$scope" = "pr" ]; then
             git remote set-head origin "$BASE_REF" >/dev/null 2>&1 || true
           fi
-          mise run check "--$scope" || {
+          mise run check "--$scope" --sarif hk.sarif || {
             echo "::error::Lint & format failed on $REF_NAME — fix locally with 'mise run check --fix --$scope', then push. ('mise run setup' installs the pre-commit hook so this happens on every commit.)"
             exit 1
           }
+      # One annotation per finding, on its line in the PR's "Files changed" tab. GitHub keeps 10 errors and
+      # 10 warnings per step and drops the rest; the check step's log has them all.
+      - name: Annotate findings
+        if: always() && hashFiles('hk.sarif') != ''
+        run: |
+          jq -r '.runs[].results[]
+            | .locations[0].physicalLocation as $l
+            | (.level // "error" | if . == "note" or . == "none" then "notice" else . end) as $lvl
+            | (.message.text | gsub("%"; "%25") | gsub("\r"; "%0D") | gsub("\n"; "%0A")) as $msg
+            | ([.properties.step, .ruleId] | map(select(.)) | join(" / ")
+               | gsub("%"; "%25") | gsub(":"; "%3A") | gsub(","; "%2C")) as $title
+            | "::\($lvl) file=\($l.artifactLocation.uri),line=\($l.region.startLine),col=\($l.region.startColumn // 1),title=\($title)::\($msg)"' hk.sarif
       # One sticky PR comment pointing at `--fix`: post/update it when the check fails,
       # delete it once the check passes. No inline suggestions — the author runs the fixer.
       - name: Comment lint status
@@ -142,7 +154,7 @@ jobs:
           key: mise-cas-${{ runner.os }}-${{ hashFiles('mise.lock') }}
           restore-keys: mise-cas-${{ runner.os }}-
       - name: Setup mise
-        uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
+        uses: jdx/mise-action@6612f0ef07ed2a736cd1e00a94a065522dd41195 # v5.2.5
         with:
           version: "2026.10.24" # pin mise itself, not just the action
           install: true
