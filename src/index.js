@@ -1,5 +1,5 @@
 const alfred = require('./utils/alfred-simple');
-const Conf = require('conf').default;
+const data = require('./utils/store');
 const childProcess = require('child_process');
 const path = require('path');
 
@@ -14,16 +14,6 @@ if (!(process.env.JIRA_DOMAIN && process.env.JIRA_TOKEN && process.env.JIRA_USER
   ]);
   process.exit();
 }
-
-// Initialize data cache
-const data = new Conf({
-  configName: 'jira-data',
-  schema: {
-    updated: { type: 'number' },
-    items: { type: 'array', default: [] },
-  },
-  serialize: (value) => JSON.stringify(value),
-});
 
 // Run background update
 const updateScript = path.resolve(__dirname, 'update-data.js');
