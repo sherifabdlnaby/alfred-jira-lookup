@@ -1,16 +1,6 @@
 const axios = require('axios');
-const Conf = require('conf').default;
+const data = require('./utils/store');
 const formatIssues = require('./utils/format-issues');
-
-// Initialize data cache
-const data = new Conf({
-  configName: 'jira-data',
-  schema: {
-    updated: { type: 'number' },
-    items: { type: 'array', default: [] },
-  },
-  serialize: (value) => JSON.stringify(value),
-});
 
 const fields = ['key', 'assignee', 'summary', 'project', 'issuetype', 'status', 'updated'].join(
   ',',

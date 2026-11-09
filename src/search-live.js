@@ -1,7 +1,7 @@
 const axios = require('axios');
 const alfred = require('./utils/alfred-simple');
 const formatIssues = require('./utils/format-issues');
-const Conf = require('conf').default;
+const cachedData = require('./utils/store');
 
 // Check if workflow is configured
 if (!(process.env.JIRA_DOMAIN && process.env.JIRA_TOKEN && process.env.JIRA_USERNAME)) {
@@ -14,16 +14,6 @@ if (!(process.env.JIRA_DOMAIN && process.env.JIRA_TOKEN && process.env.JIRA_USER
   ]);
   process.exit();
 }
-
-// Initialize caches
-const cachedData = new Conf({
-  configName: 'jira-data',
-  schema: {
-    updated: { type: 'number' },
-    items: { type: 'array', default: [] },
-  },
-  serialize: (value) => JSON.stringify(value),
-});
 
 const query = alfred.input.trim();
 
