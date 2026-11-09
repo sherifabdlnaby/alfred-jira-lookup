@@ -58,10 +58,8 @@ hk check $ff ${usage_fix:+--fix} ${usage_all:+--all} ${usage_pr:+--pr} \
 '''
 
 [tasks.test]
-description = "Run tests (none yet — placeholder)"
-# ordering only; depends run in parallel, don't see this task's env
-depends = ["lint"]
-run = "echo 'No tests yet.'"
+description = "Run the workflow scripts against a seeded cache"
+run = "node --test test/"
 
 [tasks.setup] # one-time, idempotent bootstrap; re-run when `enter` warns it's stale
 description = "One-time, idempotent project bootstrap: check prerequisites, install tools, then runtime deps"

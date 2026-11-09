@@ -164,6 +164,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install deps
         run: mise run deps
+      - name: Test
+        run: mise run test
       - name: Build .alfredworkflow
         run: |
           set -euo pipefail

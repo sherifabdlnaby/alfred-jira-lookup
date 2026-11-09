@@ -1,17 +1,7 @@
 const axios = require('axios');
 const fs = require('fs');
-const Conf = require('conf');
+const data = require('./store');
 const path = require('path');
-
-// Initialize data cache for icons directory path
-const data = new Conf({
-  configName: 'jira-data',
-  schema: {
-    updated: { type: 'number' },
-    items: { type: 'array', default: [] },
-  },
-  serialize: (value) => JSON.stringify(value),
-});
 
 // Create icons directory in cache folder
 const iconsDir = path.join(path.dirname(data.path), 'icons');
