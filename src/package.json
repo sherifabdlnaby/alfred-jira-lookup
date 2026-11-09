@@ -4,7 +4,7 @@
   "homepage": "https://github.com/sherifabdlnaby/alfred-jira-lookup",
   "packageManager": "npm@11.20.0",
   "engines": {
-    "node": ">=20.19.0"
+    "node": ">=22"
   },
   "dependencies": {
     "axios": "^1.21.0",
